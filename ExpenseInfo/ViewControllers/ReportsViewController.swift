@@ -3,6 +3,7 @@
 import UIKit
 import CoreData
 import MessageUI
+import Zip
 class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegate {
     @IBOutlet weak var menuButton: RoundButton!
     @IBOutlet weak var expensBtn: UIButton!
@@ -42,6 +43,15 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
         let firstVC = self.storyboard?.instantiateViewController(withIdentifier: "HomeViewController") as? HomeViewController
         self.present(firstVC!, animated: true, completion: nil)
     }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        
+        if result.rawValue == 2 {
+          //  updateSubmitted()
+        }
+        controller.dismiss(animated: true)
+    }
+    
     func showMenu() {
         
         
@@ -146,7 +156,7 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
         self.present(firstVC!, animated: true, completion: nil)
         
     }
-    var unclaimedListArray = [ExpenseListInfo]()
+    var expenseListArray = [ExpenseListInfo]()
 
     @IBAction func uploadBill(_ sender: Any) {
         
@@ -167,7 +177,7 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
     
     
     func generateReportforExpense() {
-        unclaimedListArray = [ExpenseListInfo]()
+        expenseListArray = [ExpenseListInfo]()
         let managedObjectContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         let typefetch = NSFetchRequest<NSFetchRequestResult>(entityName: "ExpenseContent")
@@ -196,24 +206,29 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
                     print(exp.tags as? [String] as Any)
                     addAcc.notes = exp.notes
                     
+                    if exp.billImage != nil {
+                        addAcc.billImg =  exp.billImage
+                    }
                     
-                    unclaimedListArray.append(addAcc)
+                    expenseListArray.append(addAcc)
                 }
                 
                 
-                if unclaimedListArray.count > 0 {
+                if expenseListArray.count > 0 {
                     let fileName = "Expense.csv"
                     let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-                    var csvText = "Date,Time,Category,Merchant,Amount,Tags,Description,Expense mode\n"
+                    var csvText = "Date,Time,Category,Merchant,Amount,Tags,Description,Expense mode,Image\n"
                     
                     //                                    var logo = UIImage(named: "335863679")
                     //                                    let imageData:Data =  logo!.pngData()!
                     //                                    let base64String = imageData.base64EncodedString()
                     //                                    print(base64String)
                     //
+                    var billImages: NSMutableArray = [] //
+                    var zipBill = [emailBill]()
+
                     
-                    
-                    for task in unclaimedListArray {
+                    for task in expenseListArray {
                         let dateFormatter = DateFormatter()
                         //                        dateFormatter.dateStyle = .short
                         print(task.date)
@@ -237,7 +252,19 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
                             notes = task.notes!
                         }
                         
-                        let newLine = "\(task.date!),\(task.time!),\(task.category!),\(task.merchantName!),\(task.currencySymbol!)\(task.amount!),\(tagString),\(notes),\(task.expenseMode!)\n"
+                        var billImg : String = ""
+                        print(task.billImg);
+                        if (task.billImg != nil) {
+                            print("bill Available")
+                            var bills = emailBill()
+                            bills.name = "\(task.id!).png"
+                            bills.image = task.billImg!
+                            billImg = "\(task.id!).png"
+                            zipBill.append(bills)
+                            billImages.add(task.billImg!)
+                        }
+                        
+                        let newLine = "\(task.date!),\(task.time!),\(task.category!),\(task.merchantName!),\(task.currencySymbol!)\(task.amount!),\(tagString),\(notes),\(task.expenseMode!),\(billImg) \n"
                         csvText.append(contentsOf: newLine)
                     }
                     
@@ -245,31 +272,105 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
                         print(path)
                         try csvText.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
                         
-                        let vc = UIActivityViewController(activityItems: [path], applicationActivities: [])
-                        vc.excludedActivityTypes = [
-                            UIActivity.ActivityType.assignToContact,
-                            UIActivity.ActivityType.saveToCameraRoll,
-                            UIActivity.ActivityType.postToFlickr,
-                            UIActivity.ActivityType.postToVimeo,
-                            UIActivity.ActivityType.postToTencentWeibo,
-                            UIActivity.ActivityType.postToTwitter,
-                            UIActivity.ActivityType.postToFacebook,
-                            UIActivity.ActivityType.openInIBooks
-                        ]
-                        present(vc, animated: true, completion: nil)
+//                        let vc = UIActivityViewController(activityItems: [path], applicationActivities: [])
+//                        vc.excludedActivityTypes = [
+//                            UIActivity.ActivityType.assignToContact,
+//                            UIActivity.ActivityType.saveToCameraRoll,
+//                            UIActivity.ActivityType.postToFlickr,
+//                            UIActivity.ActivityType.postToVimeo,
+//                            UIActivity.ActivityType.postToTencentWeibo,
+//                            UIActivity.ActivityType.postToTwitter,
+//                            UIActivity.ActivityType.postToFacebook,
+//                            UIActivity.ActivityType.openInIBooks
+//                        ]
+//                        present(vc, animated: true, completion: nil)
+                        
+//                        if billImages.count > 0 {
+//                            let fileManager = FileManager.default
+//                            if let tDocumentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+//                                let filePath =  tDocumentDirectory.appendingPathComponent("Expense_Receipt")
+//                                if !fileManager.fileExists(atPath: filePath.path) {
+//                                    do {
+//                                        try fileManager.createDirectory(atPath: filePath.path, withIntermediateDirectories: true, attributes: nil)
+//
+//
+//                                    } catch {
+//                                        NSLog("Couldn't create document directory")
+//                                    }
+//                                }
+//
+//                                for value in zipBill {
+//                                    let fileURL = filePath.appendingPathComponent(value.name!)
+//                                    print(fileURL)
+//
+//                                    var image = UIImage(data: value.image!)
+//                                    if let data = image?.jpegData(compressionQuality:1.0) ,//UIImageJPEGRepresentation(image!, 1.0),
+//                                        !FileManager.default.fileExists(atPath: fileURL.path) {
+//                                        do {
+//                                            // writes the image data to disk
+//                                            try data.write(to: fileURL)
+//                                            print("file saved")
+//                                        } catch {
+//                                            print("error saving file:", error)
+//                                        }
+//                                    }
+//                                }
+//
+//
+//                                NSLog("Document directory is \(filePath)")
+//                            }
+//                        }
+                        
+                                                                if MFMailComposeViewController.canSendMail() {
+                                                                    let emailController = MFMailComposeViewController()
+                                                                    emailController.mailComposeDelegate = self
+                                                                    emailController.setToRecipients([])
+                                                                    emailController.setSubject("Expense data export")
+                                                                    emailController.setMessageBody("Hi,\n\nThe .csv data export is attached\n\n\nSent from the Expense app", isHTML: true)
+                                                                    emailController.addAttachmentData(NSData(contentsOf: path!)! as Data, mimeType: "csv", fileName: "Expense.csv")
+                                                                    
+
+                                                                    
+                                                                    for value in billImages {
+                                                                        emailController.addAttachmentData(value as! Data, mimeType: "image/png", fileName: "Expense.png")
+                                                                    }
+                                                                  
+//                                                                    do {
+//                                                                        let filePath = Bundle.main.url(forResource: "file", withExtension: "zip")!
+//                                                                        let unzipDirectory = try Zip.quickUnzipFile(filePath) // Unzip
+//                                                                        let zipFilePath = try Zip.quickZipFiles([filePath], fileName: "archive") // Zip
+//
+//                                                                        emailController.addAttachmentData(NSData(contentsOf: zipFilePath)! as Data, mimeType: "application/zip", fileName: "ExpenseImages.zip")
+//                                                                    }
+//                                                                    catch {
+//                                                                        print("Something went wrong")
+//                                                                    }
+
+                                                                    present(emailController, animated: true, completion: nil)
+                                                                } else {
+                                                                    showSendMailErrorAlert()
+                        }
+                        
+//                        var picker = MFMailComposeViewController()
+//                        picker.mailComposeDelegate = self
+//                        var paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+//
+//                        var documentsDirectory = paths[0]
+//
+//                        var WritableDBPath = URL(fileURLWithPath: documentsDirectory).appendingPathComponent("Expense.zip").absoluteString
+//
+//                        var data = NSData(contentsOfFile: WritableDBPath) as Data?
+//
+//                        if let data = data {
+//                            picker.addAttachmentData(data, mimeType: "application/zip", fileName: "/abc.zip")
+//                        }
+//                        picker.setSubject("Database")
+//
+//                        picker.setMessageBody("Database testing", isHTML: false)
+//
+//                        present(picker, animated: true)
                         
                         
-                        //                                        if MFMailComposeViewController.canSendMail() {
-                        //                                            let emailController = MFMailComposeViewController()
-                        //                                            emailController.mailComposeDelegate = self
-                        //                                            emailController.setToRecipients([])
-                        //                                            emailController.setSubject("Expense data export")
-                        //                                            emailController.setMessageBody("Hi,\n\nThe .csv data export is attached\n\n\nSent from the Expense app", isHTML: false)
-                        //
-                        //                                            emailController.addAttachmentData(NSData(contentsOf: path!)! as Data, mimeType: "text/csv", fileName: "Expense.csv")
-                        //
-                        //                                            present(emailController, animated: true, completion: nil)
-                        //                                        }
                     } catch {
                         print("Failed to create file")
                         print("\(error)")
@@ -277,7 +378,7 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
                 }
 
             } else {
-                if (self.unclaimedListArray.count == 0) {
+                if (self.expenseListArray.count == 0) {
                 } else {
                 }
             }
@@ -287,5 +388,14 @@ class ReportsViewController: UIViewController,MFMailComposeViewControllerDelegat
         }
         
         
+    }
+    
+    func showSendMailErrorAlert() {
+        
+        let alert = UIAlertController(title: "Email Failed", message: "Your device could not send e-mail.  Please check e-mail configuration and try again.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        self.present(alert, animated: true)
     }
 }

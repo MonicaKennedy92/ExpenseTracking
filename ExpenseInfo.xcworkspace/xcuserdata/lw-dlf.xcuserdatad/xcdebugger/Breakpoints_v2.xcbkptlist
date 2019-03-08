@@ -121,22 +121,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ExpenseInfo/ViewControllers/ExpenseDetailsViewController.swift"
-            timestampString = "573632863.3363"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "mailComposeController(_:didFinishWith:error:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "ExpenseInfo/ViewControllers/Camera/ScannerViewController.swift"
             timestampString = "573630518.59117"
             startingColumnNumber = "9223372036854775807"
@@ -154,7 +138,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ExpenseInfo/ViewControllers/ReimbursementViewController.swift"
-            timestampString = "573636101.588075"
+            timestampString = "573739075.785529"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "301"
@@ -170,12 +154,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ExpenseInfo/ViewControllers/AddNewExpenseViewController.swift"
-            timestampString = "573636101.588585"
+            timestampString = "573739075.785581"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "440"
-            endingLineNumber = "440"
-            landmarkName = "updatenewMerchant(merchantName:)"
+            startingLineNumber = "571"
+            endingLineNumber = "571"
+            landmarkName = "addnewExpenseNow()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ExpenseInfo/ViewControllers/ReportsViewController.swift"
+            timestampString = "573739075.785624"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "257"
+            endingLineNumber = "257"
+            landmarkName = "generateReportforExpense()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

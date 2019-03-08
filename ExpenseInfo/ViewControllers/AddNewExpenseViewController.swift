@@ -561,10 +561,13 @@ class AddNewExpenseViewController: UIViewController,LLSwitchDelegate,UITextField
                         expenseContent.expenseCategoryImg  = catimg.pngData() as? Data
                     }
                     
-                    if UserDefaults.standard.value(forKey: "DisplayImg") != nil {
-                        var imageData = UserDefaults.standard.value(forKey: "DisplayImg")
-                        expenseContent.billImage = imageData as! Data
+                    if let billimg =  imageView.image {
+                        expenseContent.billImage  = billimg.pngData() as? Data
                     }
+//                    if UserDefaults.standard.value(forKey: "DisplayImg") != nil {
+//                        var imageData = UserDefaults.standard.value(forKey: "DisplayImg")
+//                        expenseContent.billImage = imageData as! Data
+//                    }
                     expenseContent.expenseorIncome = currencySymbol
                     expenseContent.currencyCode = currencyCode
                     if reimburseSwitch {

@@ -176,6 +176,7 @@ PODS:
   - VegaScrollFlowLayout (1.1)
   - WSTagsField (4.0.0)
   - XHRealTimeBlur (1.7)
+  - Zip (1.1.0)
 
 DEPENDENCIES:
   - DatePickerDialog
@@ -197,6 +198,7 @@ DEPENDENCIES:
   - VegaScrollFlowLayout
   - WSTagsField
   - XHRealTimeBlur
+  - Zip (~> 1.1)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -235,6 +237,7 @@ SPEC REPOS:
     - VegaScrollFlowLayout
     - WSTagsField
     - XHRealTimeBlur
+    - Zip
 
 SPEC CHECKSUMS:
   DatePickerDialog: 5e1c24d9fe6506cd45dbc573eed7b0a251b1c09d
@@ -272,7 +275,8 @@ SPEC CHECKSUMS:
   VegaScrollFlowLayout: 9158061f29179147755f937c2b21693fc5dbbac3
   WSTagsField: 3a10b75c304999ead6fb2251ddc2844266e7d9f2
   XHRealTimeBlur: 661fadd5691ba2d349758e8fd5fbdb499ac55f8c
+  Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: e6d1cc01d31b6d3824d272d45eea7f90c299fb4a
+PODFILE CHECKSUM: 9eeeefffd91c9d205a1f2b713346082bf4a5f7a0
 
 COCOAPODS: 1.5.3

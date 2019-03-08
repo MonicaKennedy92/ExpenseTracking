@@ -31,6 +31,11 @@ struct ExpenseListInfo : JSONSerializable {
     var tags : [String]?
     
 }
+
+struct emailBill : JSONSerializable{
+    var name: String?
+    var image: Data?
+}
 class ExpenseViewController: UIViewController,JCActionSheetDelegate  {
     func igcMenuSelected(_ selectedMenuName: String!, at index: Int) {
         
@@ -163,7 +168,9 @@ class ExpenseViewController: UIViewController,JCActionSheetDelegate  {
                     addAcc.tags = exp.tags as? [String]
                     print(exp.tags as? [String] as Any)
                     addAcc.notes = exp.notes
-                    
+                    if exp.billImage != nil {
+                        addAcc.billImg =  exp.billImage
+                    }
                     
                     expenseListArray.append(addAcc)
                 }
